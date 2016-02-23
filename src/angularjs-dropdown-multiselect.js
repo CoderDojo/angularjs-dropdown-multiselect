@@ -56,9 +56,14 @@ directiveModule.directive('ngDropdownMultiselect', ['$filter', '$document', '$co
             },
             link: function ($scope, $element, $attrs) {
                 var $dropdownTrigger = $element.children()[0];
-                
+
                 $scope.toggleDropdown = function () {
                     $scope.open = !$scope.open;
+                    if($scope.open){
+                      if ($scope.settings.closeOnBlur) {
+                        $document.on('click', $scope.closeOnBlurHandler);
+                      };
+                    }
                 };
 
                 $scope.checkboxClick = function ($event, id) {
@@ -162,12 +167,12 @@ directiveModule.directive('ngDropdownMultiselect', ['$filter', '$document', '$co
                   if (!parentFound) {
                     $scope.$apply(function() {
                       $scope.open = false;
+
+                      if ($scope.settings.closeOnBlur) {
+                        $document.off('click', $scope.closeOnBlurHandler);
+                      }
                     });
                   }
-                };
-                
-                if ($scope.settings.closeOnBlur) {
-                  $document.on('click', $scope.closeOnBlurHandler);
                 };
 
                 $scope.getGroupTitle = function (groupValue) {
@@ -291,7 +296,7 @@ directiveModule.directive('ngDropdownMultiselect', ['$filter', '$document', '$co
                 };
 
                 $scope.externalEvents.onInitDone();
-                
+
                 $scope.$on("$destroy", function(event) {
                   if ($scope.settings.closeOnBlur) {
                     $document.off('click', $scope.closeOnBlurHandler);
